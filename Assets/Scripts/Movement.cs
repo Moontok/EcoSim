@@ -5,20 +5,13 @@ using UnityEngine.AI;
 
 public class Movement : MonoBehaviour
 {
-    public float speed = 1.0f;
-    public float actionRate = 1.0f;
+    [SerializeField] float speed = 1.0f;
     
     NavMeshAgent agent = null;
-    AnimalBehavior behavior = null;
-    Senses senses = null;
-    
-    float actionTimer = 0.0f;
 
     void Awake() 
     {
-        agent = this.GetComponent<NavMeshAgent>();
-        behavior = this.GetComponent<AnimalBehavior>();
-        senses = this.GetComponent<Senses>();        
+        agent = this.GetComponent<NavMeshAgent>();      
     }
 
     void Start() 
@@ -26,24 +19,16 @@ public class Movement : MonoBehaviour
         agent.speed = speed;
     }
 
-    void Update()
-    {
-        actionTimer += Time.deltaTime;
-
-        if(actionTimer > actionRate && !agent.hasPath)
+    public void Move(Vector3 destination) {
         {
-            actionTimer = 0.0f;
-            Move();
-            
+
+            agent.SetDestination(destination);
         }
     }
 
-    void Move() {
-        {
-            Vector3 newDestination = senses.RandomSpotInSenseArea();
-
-            agent.SetDestination(newDestination);
-        }
+    public bool HavePath()
+    {
+        return agent.hasPath;
     }
 
 

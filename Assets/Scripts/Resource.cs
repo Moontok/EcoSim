@@ -5,7 +5,17 @@ using UnityEngine;
 public class Resource : MonoBehaviour
 {
 
-    public bool food = false;
-    public bool water = false;
+    [SerializeField] bool food = false;
+    [SerializeField] bool water = false;
+
+    public bool IsFood()
+    {
+        return food;
+    }
+
+    public bool IsWater()
+    {
+        return water;
+    }
 
 }

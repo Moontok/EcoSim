@@ -4,8 +4,31 @@ using UnityEngine;
 
 public class Senses : MonoBehaviour
 {
-    public GameObject visionArea = null;
-    public float senseRadius = 1.0f;
+    [SerializeField] Transform visionArea = null;
+    [SerializeField] float senseRadius = 1.0f;
+
+
+    public Resource SeekResource(string resourceType)
+    {
+        RaycastHit[] hits = EntitiesInVisionArea();
+
+        foreach (RaycastHit hit in hits)
+        {
+            Resource resource = hit.collider.GetComponent<Resource>();
+            if(resource == null) continue;
+
+            if(resourceType == "water" && resource.IsWater())
+            {
+                return resource;
+            }
+            else if(resourceType == "food" && resource.IsFood())
+            {
+                return resource;
+            }
+        }
+        print("Don't see food or water!!!");
+        return null;
+    }
 
     public Vector3 RandomSpotInSenseArea()
     {
@@ -13,12 +36,18 @@ public class Senses : MonoBehaviour
         float randX = Random.Range(-1.0f, 1.0f) * senseRadius;
         float randZ = Random.Range(-1.0f, 1.0f) * senseRadius;
 
-        Vector3 focusPoint = visionArea.transform.position;
+        Vector3 focusPoint = visionArea.position;
         return new Vector3(focusPoint.x + randX, 0.0f, focusPoint.z + randZ);
+    }
+
+    RaycastHit[] EntitiesInVisionArea()
+    {
+        return Physics.SphereCastAll(visionArea.position, senseRadius, Vector3.up, 0);
     }
 
     void OnDrawGizmosSelected() 
     {
+        // Draw sensory region in editor.
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(visionArea.transform.position, senseRadius);
     }
