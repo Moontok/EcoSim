@@ -14,6 +14,9 @@ public class AnimalBehavior : MonoBehaviour
 
     Movement locomotion = null;
     Senses senses = null;
+    bool consuming = false;
+    bool searchingForFood = false;
+    bool searchingForWater = false;
 
     void Awake()
     {
@@ -28,42 +31,28 @@ public class AnimalBehavior : MonoBehaviour
         if(actionTimer > actionRate)
         {            
             actionTimer = 0.0f;
-
-            string resourceToSeek = TargetResource();
-
-            if(resourceToSeek != "")
+            ConditionState();
+            if(consuming)
             {
-                Resource resource = senses.SeekResource(resourceToSeek);
-
-                if(resource != null)
-                {                
-                    float distance = Vector3.Distance(this.transform.position, resource.transform.position);
-                    if(distance <= consumeDistance)
-                    {
-                        ConsumingResource(resourceToSeek);
-                    }
-                }
+                //ConsumeResource();
             }
-
-            !locomotion.HavePath()
-
-            Vector3 target = TargetArea(); 
-
-
-            locomotion.Move(target);            
+            else
+            {                
+                locomotion.Move(TargetRandomLocation());
+            }
         }
         
         hunger += Time.deltaTime;
         thirst += Time.deltaTime;
     }
 
-    void ConsumingResource(string resource)
+    void ConsumeResource(Resource resource)
     { 
-        if(resource == "water")
+        if(resource.IsWater())
         {
             thirst -= Time.deltaTime;
         }
-        else if(resource == "food")
+        if(resource.IsFood())
         {
             hunger -= Time.deltaTime;
         }
@@ -74,20 +63,18 @@ public class AnimalBehavior : MonoBehaviour
         return senses.RandomSpotInSenseArea();
     }
 
-    string TargetResource()
+    void ConditionState()
     {
-
-        if( thirst > thirstThreshold && thirst >= hunger)
+        if( thirst > thirstThreshold && thirst >= hunger && !searchingForWater)
         {
             print("Seeking water!");
-            return "water";
+            searchingForWater = true;
         }
-        else if(hunger > hungerThreshold && hunger > thirst)
+        else if(hunger > hungerThreshold && hunger > thirst && !searchingForFood)
         {
             print("Seeking food!");
-            return "food";
+            searchingForFood = true;
         }
-        return "";
     }
 
 }

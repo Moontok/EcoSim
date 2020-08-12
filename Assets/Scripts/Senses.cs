@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Senses : MonoBehaviour
 {
@@ -8,7 +6,7 @@ public class Senses : MonoBehaviour
     [SerializeField] float senseRadius = 1.0f;
 
 
-    public Resource SeekResource(string resourceType)
+    public Resource SeekResource()
     {
         RaycastHit[] hits = EntitiesInVisionArea();
 
@@ -16,17 +14,8 @@ public class Senses : MonoBehaviour
         {
             Resource resource = hit.collider.GetComponent<Resource>();
             if(resource == null) continue;
-
-            if(resourceType == "water" && resource.IsWater())
-            {
-                return resource;
-            }
-            else if(resourceType == "food" && resource.IsFood())
-            {
-                return resource;
-            }
+            return resource;
         }
-        print("Don't see food or water!!!");
         return null;
     }
 

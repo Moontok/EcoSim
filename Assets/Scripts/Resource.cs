@@ -4,18 +4,16 @@ using UnityEngine;
 
 public class Resource : MonoBehaviour
 {
-
-    [SerializeField] bool food = false;
     [SerializeField] bool water = false;
-
-    public bool IsFood()
-    {
-        return food;
-    }
+    [SerializeField] bool food = false;
 
     public bool IsWater()
     {
         return water;
     }
 
+    public bool IsFood()
+    {
+        return food;
+    }
 }

@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3135514306492332574}
-  - component: {fileID: 7108600430495886071}
   - component: {fileID: 2735934827751873685}
+  - component: {fileID: 4089120188802324543}
   m_Layer: 0
   m_Name: Water
   m_TagString: Untagged
@@ -33,20 +33,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7108600430495886071
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 439605387395813614}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5671f939d46c254194f363347fdb30c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  food: 0
-  water: 1
 --- !u!65 &2735934827751873685
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -60,6 +46,20 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 0.1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4089120188802324543
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 439605387395813614}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6db258bf35738f24db9eeb5c1c04d197, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  water: 1
+  food: 0
 --- !u!1 &5800501317050399050
 GameObject:
   m_ObjectHideFlags: 0
