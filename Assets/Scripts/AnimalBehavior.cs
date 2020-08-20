@@ -41,6 +41,7 @@ public class AnimalBehavior : MonoBehaviour
         At(search, moveToTarget, HasTarget());
         At(search, wander, HasNoTarget());
         At(moveToTarget, wander, StuckForOverASecond());
+        At(moveToTarget, wander, HasNoTarget());
         At(moveToTarget, search, Seeking());
         At(moveToTarget, consume, ReachedTarget());
         At(wander, moveToTarget, Wandering());
