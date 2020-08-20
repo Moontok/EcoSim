@@ -5,20 +5,6 @@ public class Senses : MonoBehaviour
     [SerializeField] Transform visionArea = null;
     [SerializeField] float senseRadius = 1.0f;
 
-
-    public Resource SeekResource()
-    {
-        RaycastHit[] hits = EntitiesInVisionArea();
-
-        foreach (RaycastHit hit in hits)
-        {
-            Resource resource = hit.collider.GetComponent<Resource>();
-            if(resource == null) continue;
-            return resource;
-        }
-        return null;
-    }
-
     public Vector3 RandomSpotInSenseArea()
     {
         // Select a random position inside the sightRadius of the visionArea        
@@ -29,7 +15,7 @@ public class Senses : MonoBehaviour
         return new Vector3(focusPoint.x + randX, 0.0f, focusPoint.z + randZ);
     }
 
-    RaycastHit[] EntitiesInVisionArea()
+    public RaycastHit[] EntitiesInVisionArea()
     {
         return Physics.SphereCastAll(visionArea.position, senseRadius, Vector3.up, 0);
     }

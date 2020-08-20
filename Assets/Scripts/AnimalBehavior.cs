@@ -1,80 +1,91 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class AnimalBehavior : MonoBehaviour
 {
-    [SerializeField] float hunger = 0.0f;
-    [SerializeField] float hungerThreshold = 10.0f;
-    [SerializeField] float thirst = 0.0f;
-    [SerializeField] float thirstThreshold = 10.0f;
-    [SerializeField] float consumeDistance = 1.0f;
-    [SerializeField] float actionRate = 1.0f;    
-    [SerializeField] float actionTimer = 0.0f;
+    public enum Drive
+    {
+        Nothing,
+        Water,
+    }
 
+    [SerializeField] float thirst = 0;
+    [SerializeField] float thirstThreshold = 10;
+    [SerializeField] float closeEnoughToTarget = 1f;
+
+    StateMachine stateMachine = null;
     Movement locomotion = null;
     Senses senses = null;
-    bool consuming = false;
-    bool searchingForFood = false;
-    bool searchingForWater = false;
 
-    void Awake()
+    public GameObject TargetObject { get; set; }
+    public Vector3 TargetLocation { get; set; }
+    public Resource ResourceSearchingFor { get; set; }
+    public Drive Seeking { get; set; }
+
+    void Awake() 
     {
         locomotion = this.GetComponent<Movement>();
         senses = this.GetComponent<Senses>();
-    }
 
-    void Update()
-    {
-        actionTimer += Time.deltaTime;
+        stateMachine = new StateMachine();
 
-        if(actionTimer > actionRate)
-        {            
-            actionTimer = 0.0f;
-            ConditionState();
-            if(consuming)
-            {
-                //ConsumeResource();
-            }
-            else
-            {                
-                locomotion.Move(TargetRandomLocation());
-            }
-        }
+        this.Seeking = Drive.Nothing;
+
+        SearchForResource search = new SearchForResource(this, senses);
+        Wander wander = new Wander(this, senses, locomotion);
+        MoveToSelectedTarget moveToTarget = new MoveToSelectedTarget(this, locomotion);
+        Consuming consume = new Consuming(this);
+
+        At(search, moveToTarget, HasTarget());
+        At(search, wander, HasNoTarget());
+        At(moveToTarget, wander, StuckForOverASecond());
+        At(moveToTarget, search, Seeking());
+        At(moveToTarget, consume, ReachedTarget());
+        At(wander, moveToTarget, Wandering());
+        At(wander, moveToTarget, Seeking());
+        At(consume, wander, DoneConsuming());
         
-        hunger += Time.deltaTime;
-        thirst += Time.deltaTime;
+        stateMachine.SetState(wander);
+
+        void At(IState to, IState from, Func<bool> condition) => stateMachine.AddTransition(to, from, condition);
+        Func<bool> HasTarget() => () => TargetObject != null;
+        Func<bool> StuckForOverASecond() => () => moveToTarget.timeStuck > 1f;
+        Func<bool> ReachedTarget() => () => TargetObject != null && Vector3.Distance(transform.position, TargetObject.transform.position) < closeEnoughToTarget;
+        Func<bool> Seeking() => () => this.Seeking != Drive.Nothing;
+        Func<bool> Wandering() => () => this.Seeking == Drive.Nothing;
+        Func<bool> HasNoTarget() => () => TargetObject == null;
+        Func<bool> DoneConsuming() => () => thirst <= 0;
+
     }
 
-    void ConsumeResource(Resource resource)
-    { 
-        if(resource.IsWater())
-        {
-            thirst -= Time.deltaTime;
-        }
-        if(resource.IsFood())
-        {
-            hunger -= Time.deltaTime;
-        }
-    }
-
-    Vector3 TargetRandomLocation()
+    void Update() 
     {
-        return senses.RandomSpotInSenseArea();
+        if(this.Seeking == Drive.Nothing)
+        {
+            if(thirst >= thirstThreshold) this.Seeking = Drive.Water;
+        }
+
+        stateMachine.Tick();
     }
 
-    void ConditionState()
+    public void DoneSeeking()
     {
-        if( thirst > thirstThreshold && thirst >= hunger && !searchingForWater)
-        {
-            print("Seeking water!");
-            searchingForWater = true;
-        }
-        else if(hunger > hungerThreshold && hunger > thirst && !searchingForFood)
-        {
-            print("Seeking food!");
-            searchingForFood = true;
-        }
+        this.Seeking = Drive.Nothing;
     }
 
+    public void Drink()
+    {
+        Debug.Log("Drinking...");
+        this.thirst -= Time.deltaTime;
+    }
+
+    public void BioTickers(Drive bio)
+    {
+        if(bio != Drive.Water)
+        {
+            thirst += Time.deltaTime;
+        }
+    }
 }
