@@ -1,31 +1,29 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 
-internal class Consuming : IState
+internal class Idle : IState
 {
     AnimalBehavior animal = null;
 
-    public Consuming(AnimalBehavior animal)
+
+    public Idle(AnimalBehavior animal)
     {
         this.animal = animal;
     }
 
     public void Tick()
     {
-        animal.Drink();
-        animal.BioTickers(AnimalBehavior.Drive.Water);
+        animal.BioTickers(AnimalBehavior.Drive.Nothing);
     }
 
     public void OnEnter()
     {
-        Debug.Log("Drinking...");
+        //Debug.Log("Idle...");
         animal.GetComponent<NavMeshAgent>().enabled = false;
     }
 
     public void OnExit()
     {
         animal.GetComponent<NavMeshAgent>().enabled = true;
-        animal.TargetObject = null;
-        animal.Seeking = AnimalBehavior.Drive.Nothing;
     }
 }

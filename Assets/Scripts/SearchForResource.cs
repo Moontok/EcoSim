@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 internal class SearchForResource : IState
 {
@@ -19,12 +20,11 @@ internal class SearchForResource : IState
 
     public void Tick()
     {
-        Debug.Log("Searching...");
-        animal.BioTickers(AnimalBehavior.Drive.Nothing);
     }
 
     public void OnEnter()
     {
+        Debug.Log("Searching...");
         if(animal.TargetObject == null)
         {
             RaycastHit[] sensedObjects = senses.EntitiesInVisionArea();

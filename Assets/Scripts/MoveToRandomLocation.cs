@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-internal class Wander : IState
+internal class MoveToRandomLocation : IState
 {
     public float timeStuck = 0f;
 
@@ -10,11 +8,10 @@ internal class Wander : IState
     Senses senses = null;
     Movement mover = null;
 
-    float closeEnoughToTargetLoc = 0.1f;
     Vector3 lastPosition = Vector3.zero;
 
 
-    public Wander(AnimalBehavior animal, Senses senses, Movement mover)
+    public MoveToRandomLocation(AnimalBehavior animal, Senses senses, Movement mover)
     {
         this.animal = animal;
         this.senses = senses;
@@ -23,18 +20,26 @@ internal class Wander : IState
 
     public void Tick()
     {
-        Debug.Log("Wandering...");
+        if(Vector3.Distance(animal.transform.position, lastPosition) <= 0f)
+        {
+            timeStuck += Time.deltaTime;
+            //Debug.Log("Stuck...");
+        }
+        lastPosition = animal.transform.position;
         animal.BioTickers(AnimalBehavior.Drive.Nothing);
     }
 
     public void OnEnter()
     {
+        //Debug.Log("Wandering...");
+        timeStuck = 0f;
         Vector3 target = senses.RandomSpotInSenseArea();
         animal.TargetLocation = target;
+        mover.MoveTo(target);
     }
 
     public void OnExit()
     {
-
+        timeStuck = 0f;
     }
 }

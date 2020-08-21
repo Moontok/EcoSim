@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.AI;
 
 public class Senses : MonoBehaviour
 {
@@ -7,12 +8,30 @@ public class Senses : MonoBehaviour
 
     public Vector3 RandomSpotInSenseArea()
     {
-        // Select a random position inside the sightRadius of the visionArea        
-        float randX = Random.Range(-1.0f, 1.0f) * senseRadius;
-        float randZ = Random.Range(-1.0f, 1.0f) * senseRadius;
-
+        bool validPath = true;
+        NavMeshAgent agent = this.GetComponent<NavMeshAgent>();
         Vector3 focusPoint = visionArea.position;
-        return new Vector3(focusPoint.x + randX, 0.0f, focusPoint.z + randZ);
+        Vector3 possiblePosition = Vector3.zero;
+        NavMeshPath path = new NavMeshPath();
+
+        while(validPath)
+        {
+            // Select a random position inside the sightRadius of the visionArea        
+            float randX = Random.Range(-1.0f, 1.0f) * senseRadius;
+            float randZ = Random.Range(-1.0f, 1.0f) * senseRadius;
+            possiblePosition = new Vector3(focusPoint.x + randX, 0.0f, focusPoint.z + randZ);
+
+            agent.CalculatePath(possiblePosition, path);
+            if(path.status == NavMeshPathStatus.PathComplete)
+            {
+                validPath = false;
+            }
+            print(path.status);
+
+        }
+
+        return possiblePosition;
+
     }
 
     public RaycastHit[] EntitiesInVisionArea()

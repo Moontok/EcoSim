@@ -15,6 +15,7 @@ public class AnimalBehavior : MonoBehaviour
     [SerializeField] float thirstThreshold = 10;
     [SerializeField] float closeEnoughToTarget = 1f;
     [SerializeField] float closeEnoughToLoc = 0.1f;
+    [SerializeField] GameObject locationPoint = null;
 
     StateMachine stateMachine = null;
     Movement locomotion = null;
@@ -22,7 +23,6 @@ public class AnimalBehavior : MonoBehaviour
 
     public GameObject TargetObject { get; set; }
     public Vector3 TargetLocation { get; set; }
-    public Resource ResourceSearchingFor { get; set; }
     public Drive Seeking { get; set; }
 
     void Awake() 
@@ -35,19 +35,22 @@ public class AnimalBehavior : MonoBehaviour
         this.Seeking = Drive.Nothing;
 
         SearchForResource search = new SearchForResource(this, senses);
-        Wander randomLocation = new Wander(this, senses, locomotion);
+        MoveToRandomLocation randomLocation = new MoveToRandomLocation(this, senses, locomotion);
         MoveToSelectedTarget moveToTarget = new MoveToSelectedTarget(this, locomotion);
         Consuming consume = new Consuming(this);
+        Idle idle = new Idle(this);
 
         At(search, moveToTarget, HasTarget());
         At(search, randomLocation, HasNoTarget());
-        At(moveToTarget, randomLocation, StuckForOverASecond());
-        At(moveToTarget, randomLocation, ReachedLocation());
-        At(moveToTarget, search, Seeking());
+        At(moveToTarget, randomLocation, CantReachTarget());
         At(moveToTarget, consume, ReachedTarget());
-        At(randomLocation, moveToTarget, Wandering());
-        At(randomLocation, moveToTarget, Seeking());
-        At(consume, randomLocation, DoneConsuming());
+        //At(randomLocation, search, HasDrive());
+        At(randomLocation, moveToTarget, HasTarget());
+        At(randomLocation, idle, ReachedLocation());
+        At(randomLocation, idle, CantReachLocation());
+        At(consume, idle, DoneConsuming());
+        At(idle, randomLocation, HasNoDrive());
+        At(idle, search, HasDrive());
         
         stateMachine.SetState(randomLocation);
 
@@ -55,12 +58,13 @@ public class AnimalBehavior : MonoBehaviour
 
         Func<bool> HasTarget() => () => TargetObject != null;
         Func<bool> HasNoTarget() => () => TargetObject == null;
-        Func<bool> StuckForOverASecond() => () => moveToTarget.timeStuck > 1f;
+        Func<bool> CantReachTarget() => () => moveToTarget.timeStuck > 1f;
+        Func<bool> CantReachLocation() => () => randomLocation.timeStuck > 1f;
         Func<bool> ReachedTarget() => () => TargetObject != null && Vector3.Distance(this.transform.position, TargetObject.transform.position) < closeEnoughToTarget;
-        Func<bool> Seeking() => () => this.Seeking != Drive.Nothing;
-        Func<bool> Wandering() => () => this.Seeking == Drive.Nothing;
+        Func<bool> ReachedLocation() => () => TargetLocation != null && Vector3.Distance(this.transform.position, TargetLocation) < closeEnoughToLoc;
+        Func<bool> HasDrive() => () => this.Seeking != Drive.Nothing;
         Func<bool> DoneConsuming() => () => thirst <= 0;
-        Func<bool> ReachedLocation() => () => TargetObject == null && Vector3.Distance(this.transform.position, TargetLocation) < closeEnoughToLoc;
+        Func<bool> HasNoDrive() => () => this.Seeking == Drive.Nothing;
 
     }
 
@@ -72,6 +76,7 @@ public class AnimalBehavior : MonoBehaviour
         }
 
         stateMachine.Tick();
+        locationPoint.transform.position = this.TargetLocation;
     }
 
     public void DoneSeeking()

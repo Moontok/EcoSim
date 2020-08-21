@@ -18,27 +18,20 @@ internal class MoveToSelectedTarget : IState
 
     public void Tick()
     {
-        // Debug.Log("MovingTo...");
-        // if(Vector3.Distance(animal.transform.position, lastPosition) <= 0f)
-        // {
-        //     timeStuck += Time.deltaTime;
-        //     Debug.Log("Stuck...");
-        // }
-        // lastPosition = animal.transform.position;
+        if(Vector3.Distance(animal.transform.position, lastPosition) <= 0f)
+        {
+            timeStuck += Time.deltaTime;
+            //Debug.Log("Stuck...");
+        }
+        lastPosition = animal.transform.position;
         animal.BioTickers(AnimalBehavior.Drive.Nothing);
     }
 
     public void OnEnter()
     {
+        //Debug.Log("MovingTo...");
         timeStuck = 0f;
-        if(animal.TargetObject != null)
-        {
-            mover.MoveTo(animal.TargetObject.transform.position);
-        }
-        else
-        {
-            mover.MoveTo(animal.TargetLocation);
-        }
+        mover.MoveTo(animal.TargetObject.transform.position);
     }
 
     public void OnExit()
