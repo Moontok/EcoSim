@@ -18,13 +18,13 @@ internal class MoveToSelectedTarget : IState
 
     public void Tick()
     {
-        Debug.Log("MovingTo...");
-        if(Vector3.Distance(animal.transform.position, lastPosition) <= 0f)
-        {
-            timeStuck += Time.deltaTime;
-            Debug.Log("Stuck...");
-        }
-        lastPosition = animal.transform.position;
+        // Debug.Log("MovingTo...");
+        // if(Vector3.Distance(animal.transform.position, lastPosition) <= 0f)
+        // {
+        //     timeStuck += Time.deltaTime;
+        //     Debug.Log("Stuck...");
+        // }
+        // lastPosition = animal.transform.position;
         animal.BioTickers(AnimalBehavior.Drive.Nothing);
     }
 
