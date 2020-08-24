@@ -8,13 +8,13 @@ public class Senses : MonoBehaviour
 
     public Vector3 RandomSpotInSenseArea()
     {
-        bool validPath = true;
+        bool invalidPath = true;
         NavMeshAgent agent = this.GetComponent<NavMeshAgent>();
         Vector3 focusPoint = visionArea.position;
         Vector3 possiblePosition = Vector3.zero;
         NavMeshPath path = new NavMeshPath();
 
-        while(validPath)
+        while(invalidPath)
         {
             // Select a random position inside the sightRadius of the visionArea        
             float randX = Random.Range(-1.0f, 1.0f) * senseRadius;
@@ -24,14 +24,10 @@ public class Senses : MonoBehaviour
             agent.CalculatePath(possiblePosition, path);
             if(path.status == NavMeshPathStatus.PathComplete)
             {
-                validPath = false;
+                invalidPath = false;
             }
-            print(path.status);
-
         }
-
         return possiblePosition;
-
     }
 
     public RaycastHit[] EntitiesInVisionArea()

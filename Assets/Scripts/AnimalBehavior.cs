@@ -11,11 +11,17 @@ public class AnimalBehavior : MonoBehaviour
         Water,
     }
 
+    [SerializeField] Material normalMaterial = null;
     [SerializeField] float thirst = 0;
     [SerializeField] float thirstThreshold = 10;
+    [SerializeField] float thirstRate = 1f;
+    [SerializeField] float drinkRate = 2f;
+    [SerializeField] Material thirstMaterial = null;
+    [SerializeField] float stuckTime = 0.5f;
     [SerializeField] float closeEnoughToTarget = 1f;
     [SerializeField] float closeEnoughToLoc = 0.1f;
-    [SerializeField] GameObject locationPoint = null;
+    [SerializeField] GameObject particalSystemController = null;
+    [SerializeField] GameObject body = null;
 
     StateMachine stateMachine = null;
     Movement locomotion = null;
@@ -29,6 +35,9 @@ public class AnimalBehavior : MonoBehaviour
     {
         locomotion = this.GetComponent<Movement>();
         senses = this.GetComponent<Senses>();
+
+        RandomlySetAttributes();
+
 
         stateMachine = new StateMachine();
 
@@ -44,7 +53,6 @@ public class AnimalBehavior : MonoBehaviour
         At(search, randomLocation, HasNoTarget());
         At(moveToTarget, randomLocation, CantReachTarget());
         At(moveToTarget, consume, ReachedTarget());
-        //At(randomLocation, search, HasDrive());
         At(randomLocation, moveToTarget, HasTarget());
         At(randomLocation, idle, ReachedLocation());
         At(randomLocation, idle, CantReachLocation());
@@ -58,8 +66,8 @@ public class AnimalBehavior : MonoBehaviour
 
         Func<bool> HasTarget() => () => TargetObject != null;
         Func<bool> HasNoTarget() => () => TargetObject == null;
-        Func<bool> CantReachTarget() => () => moveToTarget.timeStuck > 1f;
-        Func<bool> CantReachLocation() => () => randomLocation.timeStuck > 1f;
+        Func<bool> CantReachTarget() => () => moveToTarget.timeStuck > stuckTime;
+        Func<bool> CantReachLocation() => () => randomLocation.timeStuck > stuckTime;
         Func<bool> ReachedTarget() => () => TargetObject != null && Vector3.Distance(this.transform.position, TargetObject.transform.position) < closeEnoughToTarget;
         Func<bool> ReachedLocation() => () => TargetLocation != null && Vector3.Distance(this.transform.position, TargetLocation) < closeEnoughToLoc;
         Func<bool> HasDrive() => () => this.Seeking != Drive.Nothing;
@@ -72,11 +80,14 @@ public class AnimalBehavior : MonoBehaviour
     {
         if(this.Seeking == Drive.Nothing)
         {
-            if(thirst >= thirstThreshold) this.Seeking = Drive.Water;
+            if(thirst >= thirstThreshold)
+            {
+                this.Seeking = Drive.Water;                
+                body.GetComponent<MeshRenderer>().material = thirstMaterial;
+            }
         }
 
         stateMachine.Tick();
-        locationPoint.transform.position = this.TargetLocation;
     }
 
     public void DoneSeeking()
@@ -86,15 +97,32 @@ public class AnimalBehavior : MonoBehaviour
 
     public void Drink()
     {
-        Debug.Log("Drinking...");
-        this.thirst -= Time.deltaTime;
+        this.thirst -= Time.deltaTime * drinkRate;
     }
 
     public void BioTickers(Drive bio)
     {
         if(bio != Drive.Water)
         {
-            thirst += Time.deltaTime;
+            thirst += Time.deltaTime * thirstRate;
         }
+    }
+
+    public void ParticalSystemControllerSwitch(bool state)
+    {
+        particalSystemController.SetActive(state);
+    }
+
+    public void SetNormalMaterial()
+    {
+        body.GetComponent<MeshRenderer>().material = normalMaterial;
+    }
+
+    private void RandomlySetAttributes()
+    {        
+        thirstThreshold = UnityEngine.Random.Range(5, 15);
+        thirstRate = UnityEngine.Random.Range(0.5f, 2f);
+        drinkRate = UnityEngine.Random.Range(1f, 5f);
+        stuckTime = UnityEngine.Random.Range(0.1f, 1f);
     }
 }

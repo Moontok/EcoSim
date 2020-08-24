@@ -23,7 +23,6 @@ internal class MoveToRandomLocation : IState
         if(Vector3.Distance(animal.transform.position, lastPosition) <= 0f)
         {
             timeStuck += Time.deltaTime;
-            //Debug.Log("Stuck...");
         }
         lastPosition = animal.transform.position;
         animal.BioTickers(AnimalBehavior.Drive.Nothing);
@@ -31,11 +30,9 @@ internal class MoveToRandomLocation : IState
 
     public void OnEnter()
     {
-        //Debug.Log("Wandering...");
         timeStuck = 0f;
-        Vector3 target = senses.RandomSpotInSenseArea();
-        animal.TargetLocation = target;
-        mover.MoveTo(target);
+        animal.TargetLocation = senses.RandomSpotInSenseArea();
+        mover.MoveTo(animal.TargetLocation);
     }
 
     public void OnExit()

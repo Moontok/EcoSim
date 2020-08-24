@@ -24,7 +24,7 @@ internal class SearchForResource : IState
 
     public void OnEnter()
     {
-        Debug.Log("Searching...");
+        //Debug.Log("Searching...");
         if(animal.TargetObject == null)
         {
             RaycastHit[] sensedObjects = senses.EntitiesInVisionArea();

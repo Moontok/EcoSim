@@ -18,8 +18,8 @@ internal class Consuming : IState
 
     public void OnEnter()
     {
-        Debug.Log("Drinking...");
         animal.GetComponent<NavMeshAgent>().enabled = false;
+        animal.ParticalSystemControllerSwitch(true);
     }
 
     public void OnExit()
@@ -27,5 +27,7 @@ internal class Consuming : IState
         animal.GetComponent<NavMeshAgent>().enabled = true;
         animal.TargetObject = null;
         animal.Seeking = AnimalBehavior.Drive.Nothing;
+        animal.ParticalSystemControllerSwitch(false);
+        animal.SetNormalMaterial();
     }
 }

@@ -21,7 +21,6 @@ internal class MoveToSelectedTarget : IState
         if(Vector3.Distance(animal.transform.position, lastPosition) <= 0f)
         {
             timeStuck += Time.deltaTime;
-            //Debug.Log("Stuck...");
         }
         lastPosition = animal.transform.position;
         animal.BioTickers(AnimalBehavior.Drive.Nothing);
@@ -29,12 +28,12 @@ internal class MoveToSelectedTarget : IState
 
     public void OnEnter()
     {
-        //Debug.Log("MovingTo...");
         timeStuck = 0f;
         mover.MoveTo(animal.TargetObject.transform.position);
     }
 
     public void OnExit()
     {
+        timeStuck = 0;
     }
 }
