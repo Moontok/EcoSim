@@ -24,7 +24,8 @@ internal class SearchForResource : IState
 
     public void OnEnter()
     {
-        //Debug.Log("Searching...");
+        AnimalBehavior.Drive drive = animal.Seeking;
+        
         if(animal.TargetObject == null)
         {
             RaycastHit[] sensedObjects = senses.EntitiesInVisionArea();
@@ -32,9 +33,23 @@ internal class SearchForResource : IState
             foreach (RaycastHit hit in sensedObjects)
             {
                 Resource resource = hit.transform.GetComponent<Resource>();
-                if(resource != null && resource.GetResourceType() == Resource.ResourceType.Water)
+                if(resource != null)
                 {
-                    animal.TargetObject = hit.transform.gameObject;
+                    if(drive == AnimalBehavior.Drive.Water)
+                    {
+                        if(resource.GetResourceType() == Resource.ResourceType.Water && senses.IsValidResourcePath(resource.transform.position))
+                        {
+                            animal.TargetObject = hit.transform.gameObject;
+                        }
+                    }
+                    else if (drive == AnimalBehavior.Drive.Food)
+                    {
+                        if(resource.GetResourceType() == Resource.ResourceType.Food && senses.IsValidResourcePath(resource.transform.position))
+                        {
+                            animal.TargetObject = hit.transform.gameObject;
+                        }
+
+                    }
                 }
             }
         }

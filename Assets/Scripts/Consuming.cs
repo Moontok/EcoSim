@@ -12,8 +12,18 @@ internal class Consuming : IState
 
     public void Tick()
     {
-        animal.Drink();
-        animal.BioTickers(AnimalBehavior.Drive.Water);
+        AnimalBehavior.Drive drive = animal.Seeking;
+
+        if(drive == AnimalBehavior.Drive.Water)
+        {
+            animal.Drink();
+            animal.BioTickers(drive);
+        }
+        else if(drive == AnimalBehavior.Drive.Food)
+        {
+            animal.Eat();
+            animal.BioTickers(drive);
+        }
     }
 
     public void OnEnter()

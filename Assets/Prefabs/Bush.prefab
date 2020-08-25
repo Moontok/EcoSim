@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4377404287535399791}
   - component: {fileID: 978105671766402417}
+  - component: {fileID: 8469624634460172926}
   m_Layer: 0
   m_Name: Bush
   m_TagString: Untagged
@@ -26,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 978105671766402382}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.95, y: 0, z: -6.05}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.43172, y: 0.43172, z: 0.43172}
   m_Children:
   - {fileID: 2596700042458382886}
   m_Father: {fileID: 0}
@@ -45,6 +46,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
+--- !u!135 &8469624634460172926
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 978105671766402382}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4162334144528971484
 GameObject:
   m_ObjectHideFlags: 0
@@ -72,7 +86,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4162334144528971484}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.05, y: 0, z: 2.0500002}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4377404287535399791}
@@ -136,7 +150,7 @@ SphereCollider:
   m_GameObject: {fileID: 4162334144528971484}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
