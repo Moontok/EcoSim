@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class AnimalBehavior : MonoBehaviour
 {
@@ -12,8 +11,16 @@ public class AnimalBehavior : MonoBehaviour
     }
 
     [SerializeField] Material normalMaterial = null;
+    [SerializeField] Material deathMaterial = null;
+    [SerializeField] float age = 0f;
+    [SerializeField] float lifeSpan = 30f;
+    [SerializeField] BioBar ageBar = null;
+    [SerializeField] float decayTime = 10f;
+    [SerializeField] float movementSpeed = 1f;
     [SerializeField] float thirst = 0;
     [SerializeField] float thirstThreshold = 10;
+    [SerializeField] float maxThirst = 20;
+    [SerializeField] BioBar thirstBar = null;
     [SerializeField] float thirstRate = 1f;
     [SerializeField] float drinkRate = 2f;
     [SerializeField] Material thirstMaterial = null;
@@ -26,6 +33,8 @@ public class AnimalBehavior : MonoBehaviour
     StateMachine stateMachine = null;
     Movement locomotion = null;
     Senses senses = null;
+    float decay = 0f;
+    bool alive = true;
 
     public GameObject TargetObject { get; set; }
     public Vector3 TargetLocation { get; set; }
@@ -37,7 +46,6 @@ public class AnimalBehavior : MonoBehaviour
         senses = this.GetComponent<Senses>();
 
         RandomlySetAttributes();
-
 
         stateMachine = new StateMachine();
 
@@ -76,18 +84,25 @@ public class AnimalBehavior : MonoBehaviour
 
     }
 
+    void Start() 
+    {        
+        this.GetComponent<NavMeshAgent>().speed = movementSpeed;
+        ageBar.SetMaxAmount(lifeSpan);
+        thirstBar.SetMaxAmount(maxThirst);
+    }
+
     void Update() 
     {
-        if(this.Seeking == Drive.Nothing)
+        if(alive)
         {
-            if(thirst >= thirstThreshold)
-            {
-                this.Seeking = Drive.Water;                
-                body.GetComponent<MeshRenderer>().material = thirstMaterial;
-            }
+            stateMachine.Tick();
+            LifeChecks();
         }
-
-        stateMachine.Tick();
+        else
+        {
+            decay += Time.deltaTime;
+            if(decay >= decayTime) Destroy(this.gameObject);
+        }
     }
 
     public void DoneSeeking()
@@ -97,15 +112,22 @@ public class AnimalBehavior : MonoBehaviour
 
     public void Drink()
     {
-        this.thirst -= Time.deltaTime * drinkRate;
+        thirst -= Time.deltaTime * drinkRate;
+        thirstBar.SetAmount(thirst);
     }
 
     public void BioTickers(Drive bio)
     {
+        float time = Time.deltaTime;
         if(bio != Drive.Water)
         {
-            thirst += Time.deltaTime * thirstRate;
+            thirst += time * thirstRate;
+            thirstBar.SetAmount(thirst);
         }
+
+        age += time;
+        ageBar.SetAmount(age);
+
     }
 
     public void ParticalSystemControllerSwitch(bool state)
@@ -119,10 +141,40 @@ public class AnimalBehavior : MonoBehaviour
     }
 
     private void RandomlySetAttributes()
-    {        
+    {   
+        lifeSpan = UnityEngine.Random.Range(40, 100); 
         thirstThreshold = UnityEngine.Random.Range(5, 15);
         thirstRate = UnityEngine.Random.Range(0.5f, 2f);
         drinkRate = UnityEngine.Random.Range(1f, 5f);
         stuckTime = UnityEngine.Random.Range(0.1f, 1f);
+        movementSpeed = UnityEngine.Random.Range(0.5f, 2f);
+    }
+
+    private void Death()
+    {
+        alive = false;
+        body.GetComponent<MeshRenderer>().material = deathMaterial;
+    }
+
+    private void LifeChecks()
+    {
+        if(this.Seeking == Drive.Nothing)
+        {
+            if(thirst >= thirstThreshold)
+            {
+                Seeking = Drive.Water;                
+                body.GetComponent<MeshRenderer>().material = thirstMaterial;
+            }
+        }
+
+        if(this.age >= this.lifeSpan)
+        {
+            Death();
+        }
+
+        if(this.thirst >= maxThirst)
+        {
+            Death();
+        }
     }
 }
