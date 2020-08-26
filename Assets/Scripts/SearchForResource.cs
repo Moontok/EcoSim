@@ -37,18 +37,17 @@ internal class SearchForResource : IState
                 {
                     if(drive == AnimalBehavior.Drive.Water)
                     {
-                        if(resource.GetResourceType() == Resource.ResourceType.Water && senses.IsValidResourcePath(resource.transform.position))
+                        if(resource.GetResourceType() == Resource.ResourceType.Water)
                         {
                             animal.TargetObject = hit.transform.gameObject;
                         }
                     }
                     else if (drive == AnimalBehavior.Drive.Food)
                     {
-                        if(resource.GetResourceType() == Resource.ResourceType.Food && senses.IsValidResourcePath(resource.transform.position))
+                        if(resource.GetResourceType() == Resource.ResourceType.Food)
                         {
                             animal.TargetObject = hit.transform.gameObject;
                         }
-
                     }
                 }
             }

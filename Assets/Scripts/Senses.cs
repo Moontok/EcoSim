@@ -33,37 +33,11 @@ public class Senses : MonoBehaviour
     {
         NavMeshPath path = new NavMeshPath();
         NavMesh.CalculatePath(this.transform.position, position, NavMesh.AllAreas, path);
-        if(path.status == NavMeshPathStatus.PathComplete && GetPathLength(path) < 2)
-        {
-            Debug.Log(path.corners.Length);
-            return true;
-        }
-        return false;
-    }
-
-        public bool IsValidResourcePath(Vector3 position)
-    {
-        NavMeshPath path = new NavMeshPath();
-        NavMesh.CalculatePath(this.transform.position, position, NavMesh.AllAreas, path);
-        if(GetPathLength(path) < 4)
+        if(path.status == NavMeshPathStatus.PathComplete)
         {
             return true;
         }
         return false;
-    }
-
-    float GetPathLength(NavMeshPath path)
-    {
-        float total = 0f;
-        if(path.corners.Length < 2) return total;
-        for (int i = 0; i < path.corners.Length - 1; i++)
-        {
-            total += Vector3.Distance(path.corners[i], path.corners[i + 1]);
-            
-            Debug.DrawLine(path.corners[i], path.corners[i + 1], Color.red);           
-        }
-        return total;
-
     }
 
     void OnDrawGizmosSelected() 

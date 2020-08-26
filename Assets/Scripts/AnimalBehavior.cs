@@ -78,6 +78,7 @@ public class AnimalBehavior : MonoBehaviour
         At(search, moveToTarget, HasTarget());
         At(search, randomLocation, HasNoTarget());
         At(moveToTarget, randomLocation, CantReachTarget());
+        At(moveToTarget, randomLocation, PathToLong());
         At(moveToTarget, consume, ReachedTarget());
         At(randomLocation, moveToTarget, HasTarget());
         At(randomLocation, idle, ReachedLocation());
@@ -86,7 +87,7 @@ public class AnimalBehavior : MonoBehaviour
         At(idle, randomLocation, HasNoDrive());
         At(idle, search, HasDrive());
         
-        stateMachine.SetState(randomLocation);
+        stateMachine.SetState(idle);
 
         void At(IState to, IState from, Func<bool> condition) => stateMachine.AddTransition(to, from, condition);
 
@@ -99,6 +100,7 @@ public class AnimalBehavior : MonoBehaviour
         Func<bool> HasDrive() => () => this.Seeking != Drive.Nothing;
         Func<bool> DoneConsuming() => () => thirst <= 0 || hunger <= 0;
         Func<bool> HasNoDrive() => () => this.Seeking == Drive.Nothing;
+        Func<bool> PathToLong() => () => CheckPathLength();
 
     }
 
@@ -224,5 +226,27 @@ public class AnimalBehavior : MonoBehaviour
         if(thirst >= maxThirst) Death();
 
         if(hunger >= maxHunger) Death();
+    }
+
+    bool CheckPathLength()
+    {
+        
+        if(agent.hasPath)
+        {
+            Debug.Log("Checking Path Length..." + (agent.path.corners.Length < 4));
+            if(agent.path.corners.Length > 4)
+            {
+                TargetObject = null;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
     }
 }
