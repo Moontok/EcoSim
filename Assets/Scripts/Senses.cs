@@ -31,12 +31,11 @@ public class Senses : MonoBehaviour
 
     public bool IsValidRandomPath(Vector3 position)
     {
-        NavMeshAgent agent = this.GetComponent<NavMeshAgent>();
         NavMeshPath path = new NavMeshPath();
-
-        agent.CalculatePath(position, path);
+        NavMesh.CalculatePath(this.transform.position, position, NavMesh.AllAreas, path);
         if(path.status == NavMeshPathStatus.PathComplete && GetPathLength(path) < 2)
         {
+            Debug.Log(path.corners.Length);
             return true;
         }
         return false;
@@ -44,11 +43,9 @@ public class Senses : MonoBehaviour
 
         public bool IsValidResourcePath(Vector3 position)
     {
-        NavMeshAgent agent = this.GetComponent<NavMeshAgent>();
         NavMeshPath path = new NavMeshPath();
-
-        agent.CalculatePath(position, path);
-        if(GetPathLength(path) < 2)
+        NavMesh.CalculatePath(this.transform.position, position, NavMesh.AllAreas, path);
+        if(GetPathLength(path) < 4)
         {
             return true;
         }
@@ -61,9 +58,10 @@ public class Senses : MonoBehaviour
         if(path.corners.Length < 2) return total;
         for (int i = 0; i < path.corners.Length - 1; i++)
         {
-            total += Vector3.Distance(path.corners[i], path.corners[i + 1]);            
+            total += Vector3.Distance(path.corners[i], path.corners[i + 1]);
+            
+            Debug.DrawLine(path.corners[i], path.corners[i + 1], Color.red);           
         }
-
         return total;
 
     }
