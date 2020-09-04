@@ -4998,13 +4998,13 @@ MonoBehaviour:
   size: 0.1
   normalMaterial: {fileID: 2100000, guid: d84aabfe6c9ade8498ac009637030a7a, type: 2}
   deathMaterial: {fileID: 2100000, guid: c8cf5d876069f384a84dbd5d18c37681, type: 2}
-  ageSeed: 160
+  ageSeed: 300
   age: 0
   lifeSpan: 30
   ageBar: {fileID: 4727179785460029910}
   decayTime: 10
   movementSpeed: 1
-  thirstSeed: 20
+  thirstSeed: 60
   thirst: 0
   thirstThreshold: 10
   maxThirst: 20
@@ -5012,7 +5012,7 @@ MonoBehaviour:
   thirstRate: 1
   drinkRate: 2
   thirstMaterial: {fileID: 2100000, guid: 609f242cd29aec44987c35ad9ad1a0e3, type: 2}
-  hungerSeed: 20
+  hungerSeed: 60
   hunger: 0
   hungerThreshold: 10
   maxHunger: 20
